@@ -5,7 +5,7 @@ export const Post = styled('div', {
     display: 'flex',
     flexDirection: 'column',
     background: '$white',
-    boxShadow: 'rgba(99, 99, 99, 0.4) 0px 2px 8px 0px',
+    boxShadow: 'rgba(99, 99, 99, 0.4) 0px 1px 5px 0px',
     width: '100%',
 })
 
