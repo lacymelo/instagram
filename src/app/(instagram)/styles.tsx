@@ -21,6 +21,7 @@ export const Content = styled('div', {
 
 export const Page = styled('div', {
     display: 'flex',
+    flexDirection: 'column',
     margin: '$4',
     gap: '$4',
 })
