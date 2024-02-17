@@ -62,7 +62,7 @@ pnpm i react-hook-form @hookform/resolvers zod
 🛠️ Para trabalhar com variáveis ambientes instale a
 biblioteca para gerenciar variáveis ambientes
 ```bash
- pnpm i @t3-oss/env-nextjs
+pnpm i @t3-oss/env-nextjs
 ```
 🛠️ Para trabalhar com requisições para apis instale a biblioteca axios
 ```bash

@@ -6,6 +6,10 @@ import { ChangeEvent, useState } from "react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { api } from "@/lib/axios";
+import { AxiosError } from "axios";
+import { useRouter } from "next/navigation";
+import { env } from "@/env.js";
 
 const newPostFormSchema = z.object({
     author: z.string()
@@ -46,6 +50,8 @@ export default function New() {
         resolver: zodResolver(newPostFormSchema)
     })
 
+    const router = useRouter()
+
     const [profilePicture, setProfilePicture] = useState<{
         file: File | null,
         url: string | null
@@ -70,8 +76,28 @@ export default function New() {
     }
 
     async function handleNewPost(data: NewPost) {
+        const formData = new FormData();
+        formData.append('author', data.author);
+        formData.append('place', data.place);
+        formData.append('description', data.description);
+        formData.append('image', profilePicture.file!);
 
-        console.log(data)
+        if (data.hashtags) {
+            formData.append('hashtags', data.hashtags);
+        }
+
+        await api.post('/post', formData).then((response) => {
+            console.log(response)
+        })
+            .catch((err) => {
+                if (err.code === AxiosError.ERR_NETWORK) {
+                    console.log('Sem conexão')
+                } else {
+                    console.log(err)
+                }
+            }).finally(() => {
+                router.push('/')
+            })
     }
 
     return (
