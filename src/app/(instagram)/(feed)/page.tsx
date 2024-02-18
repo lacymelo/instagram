@@ -25,14 +25,15 @@ interface PostProps {
     like: number
 }
 
-interface SocketDataProps {
+interface SocketLikeProps {
     postId: string
     likes: number
 }
 
 export default function Feed() {
     const [posts, setPosts] = useState<PostProps[]>([])
-    const [socketData, setSocketData] = useState<SocketDataProps>()
+    const [socketLike, setSocketLike] = useState<SocketLikeProps>()
+    const [socketPost, setSocketPost] = useState<PostProps>()
 
     async function getPosts() {
         await api.get('/posts').then((response) => {
@@ -47,24 +48,36 @@ export default function Feed() {
             })
     }
 
-    useEffect(() => {
-        const fetchDataAndConnectWebSocket = async () => {
-            await getPosts()
+    async function likeInPost(postId: string) {
+        await api.get(`/post/${postId}`, { withCredentials: true }).then((response) => {
+            console.log(response)
+        }).catch((err) => {
+            if (err.code === AxiosError.ERR_NETWORK) {
+                console.log('Sem conexão')
+            } else {
+                console.log(err)
+            }
+        })
+    }
 
-            const socket = new WebSocket(`${env.NEXT_PUBLIC_SOCKECT_API_API_INSTAGRAM}/like`)
+    useEffect(() => {
+        const fetchLikeAndConnectWebSocket = async () => {
+            getPosts()
+
+            const socket = new WebSocket(`${env.NEXT_PUBLIC_SOCKECT_API_API_INSTAGRAM}/like/result`)
 
             socket.onopen = () => {
-                console.log('Conectado ao servidor WebSocket')
+                console.log('Conectado a rota WebSocket like')
             }
 
             socket.onmessage = (event) => {
-                console.log('Mensagem recebida do servidor:', event.data)
+                console.log('Mensagem recebida da rota Websocket like:', event.data)
 
-                setSocketData(JSON.parse(event.data))
+                setSocketLike(JSON.parse(event.data))
             }
 
             socket.onclose = () => {
-                console.log('Conexão WebSocket fechada')
+                console.log('Conexão WebSocket para a rota like')
             }
 
             // Cleanup function
@@ -73,17 +86,43 @@ export default function Feed() {
             }
         }
 
-        fetchDataAndConnectWebSocket()
+        const fetchPostAndConnectWebSocket = async () => {
+            getPosts()
+
+            const socket = new WebSocket(`${env.NEXT_PUBLIC_SOCKECT_API_API_INSTAGRAM}/post/result`)
+
+            socket.onopen = () => {
+                console.log('Conectado a rota WebSocket post.')
+            }
+
+            socket.onmessage = (event) => {
+                console.log('Mensagem recebida da rota Websocket post.', event.data)
+
+                setSocketPost(JSON.parse(event.data))
+            }
+
+            socket.onclose = () => {
+                console.log('Conexão WebSocket para a rota post.')
+            }
+
+            // Cleanup function
+            return () => {
+                socket.close()
+            }
+        }
+
+        fetchLikeAndConnectWebSocket()
+        fetchPostAndConnectWebSocket()
     }, [])
 
     useEffect(() => {
-        if (socketData) {
+        if (socketLike) {
             setPosts((prevPosts) => {
                 return prevPosts.map((post) => {
-                    if (post.id == socketData.postId) {
+                    if (post.id == socketLike.postId) {
                         return {
                             ...post,
-                            like: socketData.likes
+                            like: socketLike.likes
                         }
                     }
 
@@ -91,8 +130,13 @@ export default function Feed() {
                 })
             })
         }
-    }, [socketData])
 
+        if (socketPost) {
+            const updatedPosts = [...posts]
+            updatedPosts.unshift(socketPost)
+            setPosts(updatedPosts)
+        }
+    }, [socketLike, socketPost])
 
     return (
         <Page>
@@ -136,27 +180,35 @@ export default function Feed() {
 
 
                         <Controls>
-                            <Image
-                                src={like}
-                                height={20}
-                                width={20}
-                                alt="câmera"
-                                priority
-                            />
-                            <Image
-                                src={comment}
-                                height={20}
-                                width={20}
-                                alt="câmera"
-                                priority
-                            />
-                            <Image
-                                src={send}
-                                height={20}
-                                width={20}
-                                alt="câmera"
-                                priority
-                            />
+                            <div onClick={() => likeInPost(post.id)}>
+                                <Image
+                                    src={like}
+                                    height={20}
+                                    width={20}
+                                    alt="hart"
+                                    priority
+                                />
+                            </div>
+
+                            <div>
+                                <Image
+                                    src={comment}
+                                    height={20}
+                                    width={20}
+                                    alt="comment"
+                                    priority
+                                />
+                            </div>
+
+                            <div>
+                                <Image
+                                    src={send}
+                                    height={20}
+                                    width={20}
+                                    alt="air plane"
+                                    priority
+                                />
+                            </div>
                         </Controls>
 
                         <Content>

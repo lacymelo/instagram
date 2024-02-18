@@ -39,7 +39,11 @@ export const ImageContainer = styled('div', {
 export const Controls = styled('div', {
     display: 'flex',
     padding: '$3',
-    gap: '$3'
+    gap: '$3',
+
+    div: {
+        cursor: 'pointer'
+    }
 })
 
 export const Content = styled('div', {
