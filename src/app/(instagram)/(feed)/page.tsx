@@ -8,7 +8,7 @@ import comment from "../../../assets/comment.svg"
 import send from "../../../assets/send.svg"
 import hero from "../../../assets/allmight.png"
 import { Page } from "../styles";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { api } from "@/lib/axios";
 import { AxiosError } from "axios";
 import { env } from "@/env";
@@ -25,8 +25,14 @@ interface PostProps {
     like: number
 }
 
+interface SocketDataProps {
+    postId: string
+    likes: number
+}
+
 export default function Feed() {
     const [posts, setPosts] = useState<PostProps[]>([])
+    const [socketData, setSocketData] = useState<SocketDataProps>()
 
     async function getPosts() {
         await api.get('/posts').then((response) => {
@@ -42,14 +48,57 @@ export default function Feed() {
     }
 
     useEffect(() => {
-        getPosts()
+        const fetchDataAndConnectWebSocket = async () => {
+            await getPosts()
+
+            const socket = new WebSocket(`${env.NEXT_PUBLIC_SOCKECT_API_API_INSTAGRAM}/like`)
+
+            socket.onopen = () => {
+                console.log('Conectado ao servidor WebSocket')
+            }
+
+            socket.onmessage = (event) => {
+                console.log('Mensagem recebida do servidor:', event.data)
+
+                setSocketData(JSON.parse(event.data))
+            }
+
+            socket.onclose = () => {
+                console.log('Conexão WebSocket fechada')
+            }
+
+            // Cleanup function
+            return () => {
+                socket.close()
+            }
+        }
+
+        fetchDataAndConnectWebSocket()
     }, [])
+
+    useEffect(() => {
+        if (socketData) {
+            setPosts((prevPosts) => {
+                return prevPosts.map((post) => {
+                    if (post.id == socketData.postId) {
+                        return {
+                            ...post,
+                            like: socketData.likes
+                        }
+                    }
+
+                    return post
+                })
+            })
+        }
+    }, [socketData])
+
 
     return (
         <Page>
             {
                 posts.map((post) => (
-                    <Post>
+                    <Post key={post.id}>
                         <PostHeader>
                             <Profile>
                                 <Avatar />

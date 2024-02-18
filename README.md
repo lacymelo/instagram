@@ -68,6 +68,10 @@ pnpm i @t3-oss/env-nextjs
 ```bash
  pnpm i axios
 ```
+🛠️ Como essa aplicação utilizará conexões de socket, vamos utilizar a biblioteca `socket.io-client`, para isso instale utilizando o comando.
+```bash
+ pnpm i socket.io-client
+```
 
 # :closed_book: License
 
