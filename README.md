@@ -18,6 +18,18 @@
 
 ---
 
+## :eyes: Nossas Páginas
+✨ página de `Feed` com os posts de usuários
+  <p align="center">
+    <img alt="Logo Omnistack 7 - Rocketseat" src="./src/assets/feed.png" width="550px" />
+  </p>
+
+✨ página de `New Post` com os posts de usuários
+  <p align="center">
+    <img alt="Logo Omnistack 7 - Rocketseat" src="./src/assets/new.png" width="550px" />
+  </p>
+
+
 ## :eyes: Visite nossa api
 👉 [API-INSTAGRAM](https://github.com/lacymelo/API-INSTAGRAM)
 

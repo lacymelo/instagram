@@ -9,7 +9,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { api } from "@/lib/axios";
 import { AxiosError } from "axios";
 import { useRouter } from "next/navigation";
-import { env } from "@/env.js";
 
 const newPostFormSchema = z.object({
     author: z.string()

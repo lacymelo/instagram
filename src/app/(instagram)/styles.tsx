@@ -25,3 +25,11 @@ export const Page = styled('div', {
     margin: '$4',
     gap: '$4',
 })
+
+export const Grid = styled('div', {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(14, 1fr)',
+    gridTemplateRows: 'repeat(14, 1fr)',
+    width: '100%',
+    gap: '$4'
+})

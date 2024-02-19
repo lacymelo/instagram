@@ -1,14 +1,13 @@
 'use client'
-import { Avatar, Heading, Text } from "@labex-hambre-ui/react";
+import { Avatar, Text } from "@labex-hambre-ui/react";
 import { Content, Controls, ImageContainer, Info, More, Post, PostHeader, Profile } from "./styles";
 import Image from "next/image";
 import more from "../../../assets/more.svg"
 import like from "../../../assets/like.svg"
 import comment from "../../../assets/comment.svg"
 import send from "../../../assets/send.svg"
-import hero from "../../../assets/allmight.png"
 import { Page } from "../styles";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { api } from "@/lib/axios";
 import { AxiosError } from "axios";
 import { env } from "@/env";
